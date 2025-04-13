@@ -12,7 +12,10 @@ def menu():
             print('4 - Editar um contato')
             print('5 - Apagar um contato')
             print('6 - Finalizar')
-            opc = int(input(': '))
+            
+            
+            opc = int(input(': ')) 
+            
             if opc == 1:
                 contato = Contato()
                 salvar_arquivo(contato.nome,contato.numero)
