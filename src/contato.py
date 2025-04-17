@@ -1,4 +1,4 @@
-from conexão import maiscula
+from modulos_utils import maiscula
 class Contato():
     def __init__(self):
 

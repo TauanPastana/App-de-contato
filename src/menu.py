@@ -1,4 +1,4 @@
-from conexão import *
+from modulos import *
 from contato import Contato
 
 def menu():
@@ -11,7 +11,8 @@ def menu():
             print('3 - Buscar um nome')
             print('4 - Editar um contato')
             print('5 - Apagar um contato')
-            print('6 - Finalizar')
+            print('6 - Inserir dados fake para teste')
+            print('7 - Finalizar')
             
             
             opc = int(input(': ')) 
@@ -28,6 +29,8 @@ def menu():
             elif opc == 5:
                 verificacao(3)
             elif opc == 6:
+                contatc_automatic()
+            elif opc == 7:
                 break
         except ValueError:
             print("Opção incorreta, tente novamente!")

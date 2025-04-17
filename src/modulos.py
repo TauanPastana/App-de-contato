@@ -1,13 +1,8 @@
-import psycopg2
+from conexao import conexao, commit
+from modulos_utils import *
 from tabulate import tabulate
-
-conexao = psycopg2.connect(database="postgres",
-                           host="localhost",
-                           user="tauan_pastana",
-                           password="600227",
-                           port="5432")
-PermissionError(conexao.status)
-
+from faker import Faker
+faker = Faker("pt_BR")
 
 def salvar_arquivo(nome, telefone):
     with conexao.cursor() as cursor:
@@ -39,11 +34,13 @@ def verificacao(*args):
 
         if resultado:
             if 1 in args:
+                clear()
                 cabecalho = ["ID", "Nome", "Telefone"]
                 print(tabulate(resultado, headers=cabecalho, tablefmt="fancy_grid"))
             elif 2 in args:
                 return resultado
             elif 3 in args:
+                clear()
                 if len(resultado) == 1:
                     cabecalho = ["ID", "Nome", "Telefone"]
                     print(tabulate(resultado, headers=cabecalho, tablefmt="fancy_grid"))
@@ -64,10 +61,11 @@ def verificacao(*args):
                         print("Opção incorreta!")
                         voltar(editar)
         else:
-            print('Nome de contato não encontrado')
-            # from main import menu
-            # menu()
-            voltar(verificacao)
+            clear()
+            print('Nome de contato não encontrado\n')
+            from main import menu
+            menu()
+            
 
 
 def deletar(id):
@@ -111,9 +109,11 @@ def editar():
 
 def editar_1(id):
     with conexao.cursor() as cursor:
+        
         print('Digite 1 para editar o nome\nDigite 2 para editar o telefone\nDigite 3 para editar ambos')
         try:
             opc = int(input(': '))
+            clear()
             if opc == 1:
                 nome = input("Digite seu nome: ")
                 nome = maiscula(nome)
@@ -145,36 +145,24 @@ def editar_1(id):
             voltar(editar)
 
 
-def voltar(func):
-    clear()
-    print("Digite 1 para voltar\nDigite 2 para voltar para o menu principal")
-    opc = int(input(': '))
-    if opc == 1:
-        func(1)
-    elif opc == 2:
-        from main import menu
-        menu()
 
 
-def commit():
-    print('Deseja confirmar as alterações?\nDigite 1 para confimar\n2 Para não confrimar')
-    opc = int(input(": "))
-    if opc == 1:
-        conexao.commit()
-        from main import menu
-        menu()
-    elif opc == 2:
-        from main import menu
-        menu()
 
 
-def maiscula(nome: str):
-    nome_separador = nome.split(" ")
-    nome_separador = [nome.capitalize() for nome in nome_separador]
-    nome_capitalize = " ".join(nome_separador)
-    return nome_capitalize
+def names_generate():  
+    
+    lista = []
+    for i in range(20): 
+        tupla = (faker.name(),faker.phone_number())
+        lista.append(tupla)
+    return lista
 
-
-def clear():
-    import os
-    os.system('cls') or None
+def contatc_automatic():
+    with conexao.cursor() as cursor:
+        try:
+            lista = names_generate()
+            query = "INSERT INTO contato (nome, telefone) VALUES (%s, %s)"
+            cursor.executemany(query,lista)
+            print("Dados fakes gerados com sucessos!")
+        except Exception as e:
+            conexao.rollback()
